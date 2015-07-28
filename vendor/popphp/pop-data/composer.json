@@ -1,0 +1,44 @@
+{
+    "name": "popphp/pop-data",
+    "description": "Pop Data Component for Pop PHP Framework",
+    "keywords": [
+        "data convert",
+        "data conversion",
+        "php",
+        "pop",
+        "pop php"
+    ],
+    "homepage": "http://www.popphp.org/",
+    "license": "New BSD",
+    "authors": [
+        {
+            "name": "Nick Sagona",
+            "email": "dev@nolainteractive.com",
+            "homepage": "http://www.nolainteractive.com/"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.6.*"
+    },
+    "suggest": {
+        "ext-yaml": "To use the Yaml conversion adapter."
+    },
+    "autoload": {
+        "psr-4": {
+            "Pop\\Data\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Pop\\Data\\Test\\": "tests/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.0.x-dev"
+        }
+    }
+}

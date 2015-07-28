@@ -1,0 +1,11 @@
+.htaccess
+.DS_Store
+!index.html
+
+.idea/
+public/css/
+public/img/
+public/js/
+public/tmp/
+
+

@@ -1,0 +1,47 @@
+{
+    "name": "popphp/pop-log",
+    "description": "Pop Log Component for Pop PHP Framework",
+    "keywords": [
+        "log",
+        "logging",
+        "php",
+        "pop",
+        "pop php"
+    ],
+    "homepage": "http://www.popphp.org/",
+    "license": "New BSD",
+    "authors": [
+        {
+            "name": "Nick Sagona",
+            "email": "dev@nolainteractive.com",
+            "homepage": "http://www.nolainteractive.com/"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.6.*",
+        "popphp/pop-db": "2.0.*",
+        "popphp/pop-mail": "2.0.*"
+    },
+    "suggest": {
+        "popphp/pop-db": "For writing logs to a table in a database",
+        "popphp/pop-mail": "For sending logs to email addresses"
+    },
+    "autoload": {
+        "psr-4": {
+            "Pop\\Log\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Pop\\Log\\Test\\": "tests/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.0.x-dev"
+        }
+    }
+}

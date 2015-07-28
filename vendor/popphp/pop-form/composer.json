@@ -1,0 +1,49 @@
+{
+    "name": "popphp/pop-form",
+    "description": "Pop Form Component for Pop PHP Framework",
+    "keywords": [
+        "forms",
+        "html forms",
+        "form generation",
+        "form validation",
+        "php",
+        "pop",
+        "pop php"
+    ],
+    "homepage": "http://www.popphp.org/",
+    "license": "New BSD",
+    "authors": [
+        {
+            "name": "Nick Sagona",
+            "email": "dev@nolainteractive.com",
+            "homepage": "http://www.nolainteractive.com/"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "popphp/pop-dom": "2.0.*",
+        "popphp/pop-validator": "2.0.*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.6.*",
+        "popphp/pop-db": "2.0.*"
+    },
+    "suggest": {
+        "popphp/pop-db": "To use the dynamic field generation based on database table columns"
+    },
+    "autoload": {
+        "psr-4": {
+            "Pop\\Form\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Pop\\Form\\Test\\": "tests/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.0.x-dev"
+        }
+    }
+}
