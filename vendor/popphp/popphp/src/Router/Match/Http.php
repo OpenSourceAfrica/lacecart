@@ -21,7 +21,7 @@ namespace Pop\Router\Match;
  * @author     Nick Sagona, III <dev@nolainteractive.com>
  * @copyright  Copyright (c) 2009-2015 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    2.0.0
+ * @version    2.0.1
  */
 class Http extends AbstractMatch
 {
@@ -280,6 +280,25 @@ class Http extends AbstractMatch
         }
 
         return ((null !== $this->controller) || (null !== $this->defaultController));
+    }
+
+    /**
+     * Method to process if a route was not found
+     *
+     * @return void
+     */
+    public function noRouteFound()
+    {
+        header('HTTP/1.1 404 Not Found');
+        echo '<!DOCTYPE html>' . PHP_EOL;
+        echo '<html>' . PHP_EOL;
+        echo '    <head>' . PHP_EOL;
+        echo '        <title>Page Not Found</title>' . PHP_EOL;
+        echo '    </head>' . PHP_EOL;
+        echo '<body>' . PHP_EOL;
+        echo '    <h3>404 - Page Not Found</h3>' . PHP_EOL;
+        echo '</body>' . PHP_EOL;
+        echo '</html>'. PHP_EOL;
     }
 
     /**

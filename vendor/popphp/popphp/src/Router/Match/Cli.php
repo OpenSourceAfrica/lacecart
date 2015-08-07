@@ -21,7 +21,7 @@ namespace Pop\Router\Match;
  * @author     Nick Sagona, III <dev@nolainteractive.com>
  * @copyright  Copyright (c) 2009-2015 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    2.0.0
+ * @version    2.0.1
  */
 class Cli extends AbstractMatch
 {
@@ -179,6 +179,27 @@ class Cli extends AbstractMatch
         }
 
         return ((null !== $this->controller) || (null !== $this->defaultController));
+    }
+
+    /**
+     * Method to process if a route was not found
+     *
+     * @param  boolean $exit
+     * @return void
+     */
+    public function noRouteFound($exit = true)
+    {
+        if (stripos(PHP_OS, 'win') === false) {
+            $string  = "    \x1b[1;37m\x1b[41m                          \x1b[0m" . PHP_EOL;
+            $string .= "    \x1b[1;37m\x1b[41m    Command not found.    \x1b[0m" . PHP_EOL;
+            $string .= "    \x1b[1;37m\x1b[41m                          \x1b[0m";
+        } else {
+            $string = 'Command Not Found.';
+        }
+        echo PHP_EOL . $string . PHP_EOL . PHP_EOL;
+        if ($exit) {
+            exit(127);
+        }
     }
 
     /**

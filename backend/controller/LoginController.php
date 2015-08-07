@@ -20,4 +20,10 @@ class LoginController extends BaseController
         echo "Hello World!";
     }
 
+    public function error()
+    {
+        // Handle a non-match route request
+        echo "here";
+    }
+
 }

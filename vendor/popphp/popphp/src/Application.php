@@ -21,7 +21,7 @@ namespace Pop;
  * @author     Nick Sagona, III <dev@nolainteractive.com>
  * @copyright  Copyright (c) 2009-2015 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    2.0.0
+ * @version    2.0.1
  */
 class Application
 {
@@ -512,7 +512,7 @@ class Application
                 // Trigger any app.dispatch.post events
                 $this->trigger('app.dispatch.pre');
 
-                // If controller exists, dispatch it
+                // If route has been found and controller exists, dispatch it
                 if (null !== $controller) {
                     // If the controller is a closure
                     if ($controller instanceof \Closure) {
@@ -543,6 +543,8 @@ class Application
                             $this->router->getController()->dispatch($action);
                         }
                     }
+                } else {
+                    $this->router->getRouteMatch()->noRouteFound();
                 }
 
                 // Trigger any app.dispatch.post events

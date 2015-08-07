@@ -32,8 +32,3 @@ $services = [
  * The URL component is used to generate all kind of urls in the application
  */
 $di->setServices($services);
-
-/**
- * Set Config Object
- */
-$di->set('config', $config);

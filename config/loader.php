@@ -9,17 +9,10 @@
 $loader = new \Pop\Loader\ClassLoader();
 
 $autoLoadClasses = [
-    realpath(__DIR__ . '/../backend/constant/'),
-    realpath(__DIR__ . '/../backend/controller/'),
-    realpath(__DIR__ . '/../backend/library/'),
-    realpath(__DIR__ . '/../backend/model/'),
-    realpath(__DIR__ . '/../store/constant/'),
-    realpath(__DIR__ . '/../store/controller/'),
-    realpath(__DIR__ . '/../store/library/'),
-    realpath(__DIR__ . '/../store/model/'),
+    realpath($config->pathTo->admin),
+    realpath($config->pathTo->store),
+    realpath(__DIR__ . '/../core/')
 ];
 
 foreach($autoLoadClasses as $row)
     $loader->addClassMapFromDir($row);
-
-$loader->register(true);
