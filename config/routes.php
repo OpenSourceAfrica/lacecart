@@ -11,15 +11,14 @@ $admin_folder = str_replace(realpath(__DIR__ . '/..'), '', realpath($config->pat
 
 return [
     'routes' => [
-            '/:controller/:action/:param' => [
-                'controller' => 'LaceCart\Store\IndexController',
-                'action'     => 'index',
-                'default'    => true
+        '/:controller/:action/:param' => [
+            'controller' => 'LaceCart\Store\IndexController',
+            'action'     => 'index',
         ],
-            '/:controller' => [
-                'controller' => 'LaceCart\Store\IndexController',
-                'action'     => 'index',
-                'default'    => true
+        '/:controller' => [
+            'controller' => 'LaceCart\Store\IndexController',
+            'action'     => 'index',
+            'default'    => true
         ],
             $admin_folder .'/:controller/:action/:param' => [
                 'controller' => 'LaceCart\Backend\LoginController',
