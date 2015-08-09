@@ -17,7 +17,7 @@ class LoginController extends BaseController
 
     public function index()
     {
-        echo "Hello World!";
+        echo "You are at the backend!";
     }
 
     public function error()
