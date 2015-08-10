@@ -12,8 +12,13 @@ use \Pop\Controller\AbstractController;
 
 class BaseController extends AbstractController
 {
-    public function __construct()
-    {
+    private $services = null;
+    protected $session = null;
 
+    public function __construct($services)
+    {
+        $this->services = $services;
+
+        $this->session = $this->services->get('session');
     }
 }

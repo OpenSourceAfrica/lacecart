@@ -10,13 +10,10 @@ namespace LaceCart\Store;
 
 class IndexController extends BaseController
 {
-    public function __construct()
-    {
-
-    }
-
     public function index()
     {
+        $this->session->test = "hi";
+
         echo "You are in the Store";
     }
 }
