@@ -8,12 +8,12 @@
 
 namespace LaceCart\Store;
 
+use \Moltin\Cart;
+
 class IndexController extends BaseController
 {
     public function index()
     {
-        $this->session->test = "hi";
-
         echo "You are in the Store";
     }
 }

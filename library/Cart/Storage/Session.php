@@ -20,18 +20,24 @@
 
 namespace Moltin\Cart\Storage;
 
-use Moltin\Cart\Item;
+use Moltin\Cart\Item,
+    \Pop\Web\Session as S;
 
 class Session extends Runtime implements \Moltin\Cart\StorageInterface
 {
+    private $session;
+
+    function __construct()
+    {
+        $this->session = S::getInstance();
+    }
+
     /**
      * The Session store constructor
      */
     public function restore()
     {
-        session_id() or session_start();
-
-        if (isset($_SESSION['cart'])) static::$cart = unserialize($_SESSION['cart']);
+        if (isset($this->session->cart)) static::$cart = unserialize($this->session->cart);
     }
 
     /**
@@ -39,6 +45,6 @@ class Session extends Runtime implements \Moltin\Cart\StorageInterface
      */
     public function __destruct()
     {
-        $_SESSION['cart'] = serialize(static::$cart);
+        if (isset($this->session->cart)) $this->session->cart = serialize(static::$cart);
     }
 }

@@ -12,7 +12,6 @@ class LoginController extends BaseController
 {
     public function index()
     {
-        echo $this->session->test;
         echo "You are at the backend!";
     }
 

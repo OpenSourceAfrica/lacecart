@@ -20,8 +20,17 @@
 
 namespace Moltin\Cart\Identifier;
 
+use \Pop\Web\Cookie as C;
+
 class Cookie implements \Moltin\Cart\IdentifierInterface
 {
+    private $cookie;
+
+    function __construct()
+    {
+        $this->cookie = C::getInstance();
+    }
+
     /**
      * Get the current or new unique identifier
      * 
@@ -29,7 +38,7 @@ class Cookie implements \Moltin\Cart\IdentifierInterface
      */
     public function get()
     {
-        if (isset($_COOKIE['cart_identifier'])) return $_COOKIE['cart_identifier'];
+        if (isset($this->cookie->cart_identifier)) return $this->cookie->cart_identifier;
 
         return $this->regenerate();
     }
@@ -43,7 +52,7 @@ class Cookie implements \Moltin\Cart\IdentifierInterface
     {
         $identifier = md5(uniqid(null, true));
 
-        setcookie('cart_identifier', $identifier, 0, "/");
+        $this->cookie->set('cart_identifier', $identifier, 0, "/");
 
         return $identifier;
     }
@@ -55,6 +64,6 @@ class Cookie implements \Moltin\Cart\IdentifierInterface
      */
     public function forget()
     {
-        return setcookie('cart_identifier', null, time()-3600);
+        return $cookie->set('cart_identifier', null, time()-3600);
     }
 }
