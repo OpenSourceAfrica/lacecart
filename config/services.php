@@ -6,29 +6,35 @@
  * Time: 6:10 AM
  */
 
-use \Pop\Service\Locator as Service,
-    \Pop\Db\Adapter\Mysql as Adapter;
-
-$di = new Service();
-
-$services = [
-              'url' => ['call'   => ''],
-              'db' => ['call' => function () use ($config) {
-
-                                      $adapter = new Adapter(
-                                          [
-                                              'host'    => $config->database->host,
-                                              'username' => $config->database->username,
-                                              'password' => $config->database->password,
-                                              'database'   => $config->database->dbname
-                                          ]
-                                      );
-
-                                      return $adapter;
-                                  }]
-            ];
+use LaceCart\Application as FactoryDefault;
 
 /**
- * The URL component is used to generate all kind of urls in the application
+ * The FactoryDefault Dependency Injector automatically register the right services providing a full stack framework
+ */
+$di = new FactoryDefault();
+
+$services = [
+        'session' => [
+            'call' => 'Pop\Web\Session::getInstance'
+        ]
+];
+
+//ToDo: Add database connection to the services
+/**
+ * Database connection is created based in the parameters defined in the configuration file
+ */
+/*$di->setServices('db', function () use ($config) {
+    return new DbAdapter(array(
+        'host' => $config->database->host,
+        'username' => $config->database->username,
+        'password' => $config->database->password,
+        'database' => $config->database->dbname
+    ));
+});*/
+
+/**
+ * Start the session the first time some component request the session service
  */
 $di->setServices($services);
+
+

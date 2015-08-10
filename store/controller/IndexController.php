@@ -8,7 +8,6 @@
 
 namespace LaceCart\Store;
 
-
 class IndexController extends BaseController
 {
     public function __construct()
