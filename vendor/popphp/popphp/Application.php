@@ -288,7 +288,7 @@ class Application
      * @return Application
      */
     public function loadServices(Service\Locator $services)
-    {
+    { echo "here";
         $this->services = $services;
         return $this;
     }

@@ -8,14 +8,10 @@
 
 namespace LaceCart\Store;
 
+use \Moltin\Cart;
 
 class IndexController extends BaseController
 {
-    public function __construct()
-    {
-
-    }
-
     public function index()
     {
         echo "You are in the Store";

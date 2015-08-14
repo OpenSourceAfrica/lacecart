@@ -33,14 +33,13 @@ try {
     include __DIR__ . "/config/loader.php";
 
     /**
-     * Read services
-     */
-    include __DIR__ . "/config/services.php";
-
-    /**
      * Handle the request
      */
-    $application = new LaceCart\Application(include __DIR__ . "/config/routes.php");
+    $application = new LaceCart\Application(
+        array_merge(
+            include __DIR__ . "/config/routes.php",
+            include __DIR__ . "/config/services.php"
+        ));
 
     $application->run();
 

@@ -6,29 +6,12 @@
  * Time: 6:10 AM
  */
 
-use \Pop\Service\Locator as Service,
-    \Pop\Db\Adapter\Mysql as Adapter;
+return [
+    'services' => [
+        'session' => [
+            'call' => 'Pop\Web\Session::getInstance'
+        ]
+    ]
+];
 
-$di = new Service();
 
-$services = [
-              'url' => ['call'   => ''],
-              'db' => ['call' => function () use ($config) {
-
-                                      $adapter = new Adapter(
-                                          [
-                                              'host'    => $config->database->host,
-                                              'username' => $config->database->username,
-                                              'password' => $config->database->password,
-                                              'database'   => $config->database->dbname
-                                          ]
-                                      );
-
-                                      return $adapter;
-                                  }]
-            ];
-
-/**
- * The URL component is used to generate all kind of urls in the application
- */
-$di->setServices($services);
