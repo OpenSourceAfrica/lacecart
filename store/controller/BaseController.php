@@ -18,6 +18,8 @@ use \Pop\Controller\AbstractController,
 class BaseController extends AbstractController
 {
     private $services = null;
+
+    protected $db = null;
     protected $session = null;
     protected $cart = null;
 
@@ -25,6 +27,7 @@ class BaseController extends AbstractController
     {
         $this->services = $services;
 
+        $this->db = $this->services->get('db');
         $this->session = $this->services->get('session');
         $this->cart = new Cart(new Session(), new Cookie());
     }

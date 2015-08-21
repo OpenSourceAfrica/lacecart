@@ -14,7 +14,9 @@ class LoginController extends BaseController
 {
     public function index()
     {
-        echo "You are at the backend!";
+        echo 'You are at the backend!';
+        echo '<br />';
+        echo 'Is DB Installed: '. $this->db->isInstalled();
     }
 
     public function error()

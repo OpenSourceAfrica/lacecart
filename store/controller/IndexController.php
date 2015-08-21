@@ -16,6 +16,8 @@ class IndexController extends BaseController
 {
     public function index()
     {
-        echo "You are in the Store";
+        echo 'You are in the Store';
+        echo '<br />';
+        echo 'Is DB Installed: '. $this->db->isInstalled();
     }
 }

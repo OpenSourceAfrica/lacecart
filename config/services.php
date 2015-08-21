@@ -8,10 +8,24 @@
 *  International Registered Trademark & Property of LaceCart Team
 */
 
+use Pop\Db\Adapter\Mysql as Adapter;
+
 return [
     'services' => [
         'session' => [
             'call' => 'Pop\Web\Session::getInstance'
+        ],
+        'db' =>  [
+            'call' => function () use ($config) {
+                return new Adapter(
+                    [
+                        'host' => $config->database->host,
+                        'username' => $config->database->username,
+                        'password' => $config->database->password,
+                        'database' => $config->database->database
+                    ]
+                );
+            }
         ]
     ]
 ];
