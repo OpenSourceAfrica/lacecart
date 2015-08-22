@@ -10,7 +10,7 @@
 
 namespace LaceCart\Backend;
 
-class LoginController extends BaseController
+class AccountController extends BaseController
 {
     public function index()
     {

@@ -15,7 +15,8 @@ return new \Pop\Config\Config([
         'host'       => '',
         'username'   => '',
         'password'   => '',
-        'database'     => '',
+        'database'   => '',
+        'prefix'     => ''
     ],
 
     'pathTo' => [
