@@ -26,6 +26,11 @@ return [
                     ]
                 );
             }
+        ],
+        'config' => [
+            'call' => function () use ($config) {
+                return $config;
+            }
         ]
     ]
 ];

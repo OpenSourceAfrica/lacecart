@@ -10,13 +10,14 @@
 
 namespace LaceCart\Backend;
 
-class LoginController extends BaseController
+class AccountController extends BaseController
 {
     public function index()
     {
-        echo 'You are at the backend!';
-        echo '<br />';
-        echo 'Is DB Installed: '. $this->db->isInstalled();
+        $this->setView('account/account');
+        $this->view->title = 'Welcome';
+        $this->response->setBody($this->view->render());
+        $this->response->send();
     }
 
     public function error()

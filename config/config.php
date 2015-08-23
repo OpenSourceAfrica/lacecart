@@ -15,7 +15,12 @@ return new \Pop\Config\Config([
         'host'       => '',
         'username'   => '',
         'password'   => '',
-        'database'     => '',
+        'database'   => '',
+        'prefix'     => ''
+    ],
+
+    'application' => [
+      'viewDir' => realpath(__DIR__ . '/../backend/views/'),
     ],
 
     'pathTo' => [

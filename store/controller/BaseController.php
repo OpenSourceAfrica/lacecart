@@ -20,6 +20,7 @@ class BaseController extends AbstractController
     private $services = null;
 
     protected $db = null;
+    protected $view = null;
     protected $session = null;
     protected $cart = null;
 
