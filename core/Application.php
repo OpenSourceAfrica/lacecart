@@ -12,6 +12,8 @@ namespace LaceCart;
 
 class Application extends \Pop\Application
 {
+    public $config;
+
     public function init()
     {
         if (null !== $this->router) {
@@ -21,6 +23,8 @@ class Application extends \Pop\Application
                 ]
             );
         }
+
+        $this->config = $this->services['config'];
 
         parent::init();
     }

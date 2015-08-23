@@ -19,6 +19,10 @@ return new \Pop\Config\Config([
         'prefix'     => ''
     ],
 
+    'application' => [
+      'viewDir' => realpath(__DIR__ . '/../backend/views/'),
+    ],
+
     'pathTo' => [
         'admin' => realpath(__DIR__ . '/../backend/'),
         'store' => realpath(__DIR__ . '/../store/'),

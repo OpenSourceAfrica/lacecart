@@ -10,13 +10,7 @@
 
 namespace LaceCart\Backend;
 
-
 class AbstractModel extends \Pop\Db\Record
 {
-    protected $config;
 
-    public function __construct()
-    {
-
-    }
 }

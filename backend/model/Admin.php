@@ -11,6 +11,8 @@
 namespace LaceCart\Backend;
 
 
+use LaceCart\Application;
+
 class Admin extends AbstractModel
 {
     /**
@@ -28,15 +30,10 @@ class Admin extends AbstractModel
      */
     protected $auto = true;
 
-    /**
-     * @var   string
-     */
-    protected static $prefix;
-
 
     public function __construct()
     {
-        print_r($this->config->database);//$this->config->prefix;
+
     }
 
     public static function authenticate($username, $password)
