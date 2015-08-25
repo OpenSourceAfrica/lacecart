@@ -10,12 +10,17 @@
 
 namespace LaceCart\Backend;
 
+use \LaceCart\Backend\LoginForm;
+
 class AccountController extends BaseController
 {
     public function index()
     {
+        $login = new LoginForm();
+
         $this->setView('account/account');
         $this->view->title = 'Welcome';
+        $this->view->form = $login->form();
         $this->response->setBody($this->view->render());
         $this->response->send();
     }
