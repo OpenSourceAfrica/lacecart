@@ -1,7 +1,18 @@
 <?php include $header ; ?>
 
-Username: <input name="lace-admin-name" type="text">
-Password: <input name="lace-admin-password" type="text">
-<input type="submit" name="lace-admin-submit" value="Submit">
+<?php
+
+if ($request->isPost()) {
+    $form->setFieldValues($request->getPost());
+    if (!$form->isValid()) {
+        echo $form; // Has errors
+    } else {
+        echo 'Valid!';
+    }
+} else {
+    echo $form;
+}
+
+?>
 
 <?php include $footer ; ?>

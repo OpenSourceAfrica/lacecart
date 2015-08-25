@@ -10,6 +10,7 @@
 
 namespace LaceCart\Backend;
 
+use Pop\Http\Request;
 use \Pop\Controller\AbstractController;
 use \Pop\View\View;
 use Pop\Http\Response;
@@ -24,6 +25,7 @@ class BaseController extends AbstractController
     protected $config = null;
 
     protected $response;
+    protected $request;
     protected $view;
     protected $viewPath;
 
@@ -37,6 +39,7 @@ class BaseController extends AbstractController
 
         //set view path
         $this->response = new Response();
+        $this->request = new Request();
     }
 
     /**
@@ -47,6 +50,7 @@ class BaseController extends AbstractController
     public function setView($view_path)
     {
         $this->view = new View($this->config->application->viewDir . '/' .$view_path . '.phtml');
+        $this->view->set('request', $this->request);
         $this->view->set('header', $this->config->application->viewDir . '/partial/header.phtml');
         $this->view->set('footer', $this->config->application->viewDir . '/partial/footer.phtml');
     }
