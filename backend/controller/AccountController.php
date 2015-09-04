@@ -10,17 +10,37 @@
 
 namespace LaceCart\Backend;
 
-use \LaceCart\Backend\LoginForm;
+use LaceCart\Library\Auth as Auth;
 
 class AccountController extends BaseController
 {
     public function index()
     {
         $login = new LoginForm();
+        $form = $login->form();
+
+        if ($this->request->isPost()) {
+
+            $form->setFieldValues($this->request->getPost());
+
+            if ($form->isValid()) {
+
+                //Authenticate User
+                $username = $this->request->getPost('lace-admin-username');//get username
+                $password = $this->request->getPost('lace-admin-password');//get password
+
+                $auth = new Auth();
+                if($auth->login($username, $password)){
+                    //redirect
+                }
+
+                //show login error
+            }
+        }
 
         $this->setView('account/account');
         $this->view->title = 'Welcome';
-        $this->view->form = $login->form();
+        $this->view->form = $form;
         $this->response->setBody($this->view->render());
         $this->response->send();
     }

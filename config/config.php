@@ -12,10 +12,10 @@ return new \Pop\Config\Config([
 
     'database' => [
         'adapter'    => 'mysql',
-        'host'       => '',
-        'username'   => '',
-        'password'   => '',
-        'database'   => '',
+        'host'       => 'localhost',
+        'username'   => 'root',
+        'password'   => 'cynosure',
+        'database'   => 'lacecart',
         'prefix'     => ''
     ],
 

@@ -10,35 +10,20 @@
 
 namespace LaceCart\Backend;
 
-
-use LaceCart\Application;
-
 class Admin extends AbstractModel
 {
     /**
      * @var   string
      */
-    protected $tableName = Database::ADMINISTRATOR;
+    protected static $table = Database::ADMINISTRATOR;
 
     /**
      * @var   string
      */
-    protected $primaryId = Database::ADMINISTRATOR_PRIMARY_KEY;
+    protected $primaryKeys = [Database::ADMINISTRATOR_PRIMARY_KEY];
 
     /**
      * @var   boolean
      */
     protected $auto = true;
-
-
-    public function __construct()
-    {
-
-    }
-
-    public static function authenticate($username, $password)
-    {
-
-    }
-
 }
