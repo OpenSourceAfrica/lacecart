@@ -19,7 +19,7 @@ CREATE TABLE `administrator` (
 
 INSERT INTO `administrator` (`admin_id`, `first_name`, `last_name`, `email`, `password`)
     VALUES
-      ('1', 'John', 'Doe', 'joen.doe@lacecart.com', md5('password'));
+      ('1', 'John', 'Doe', 'joen.doe@lacecart.com', md5('passme123'));
 
 
 DROP TABLE IF EXISTS `departments`;

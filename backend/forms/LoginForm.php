@@ -25,13 +25,11 @@ class LoginForm extends FormBase
         $username = new Input\Text('lace-admin-username');
         $username->setLabel('Username:')
             ->setRequired(true)
-            ->setAttribute('size', 40)
-            ->addValidator(new Validator\AlphaNumeric());
+            ->addValidator(new Validator\Email());
 
         $password = new Input\Password('lace-admin-password');
         $password->setLabel('Password:')
-            ->setRequired(true)
-            ->setAttribute('size', 40);
+            ->setRequired(true);
 
         $submit = new Input\Submit('submit', 'SUBMIT');
 

@@ -1,18 +1,11 @@
 <?php include $header ; ?>
 
-<?php
+<form action="<?php echo $form->getAction(); ?>" method="<?php echo $form->getMethod(); ?>">
 
-if ($request->isPost()) {
-    $form->setFieldValues($request->getPost());
-    if (!$form->isValid()) {
-        echo $form; // Has errors
-    } else {
-        echo 'Valid!';
-    }
-} else {
-    echo $form;
-}
+    <p><?php echo $form->getElement('lace-admin-username')->getLabel(); ?> <?php echo $form->getElement('lace-admin-username') ; ?> </p>
+    <p><?php echo $form->getElement('lace-admin-password')->getLabel(); ?> <?php echo $form->getElement('lace-admin-password') ; ?> </p>
+    <p><?php echo $form->getElement('submit') ; ?></p>
 
-?>
+</form>
 
 <?php include $footer ; ?>

@@ -8,7 +8,8 @@
 *  International Registered Trademark & Property of LaceCart Team
 */
 
-use Pop\Db\Adapter\Mysql as Adapter;
+use Pop\Db\Db as DB;
+use Pop\Db\Record as Adapter;
 
 return [
     'services' => [
@@ -17,14 +18,12 @@ return [
         ],
         'db' =>  [
             'call' => function () use ($config) {
-                return new Adapter(
-                    [
-                        'host' => $config->database->host,
-                        'username' => $config->database->username,
-                        'password' => $config->database->password,
-                        'database' => $config->database->database
-                    ]
-                );
+                        Adapter::setDb(DB::connect($config->database->adapter, [
+                            'database' => $config->database->database,
+                            'username' => $config->database->username,
+                            'password' => $config->database->password,
+                            'host'     => $config->database->host
+                        ]));
             }
         ],
         'config' => [

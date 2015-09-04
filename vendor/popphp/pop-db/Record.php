@@ -618,7 +618,7 @@ class Record implements \ArrayAccess
      */
     protected static function parseTableName($class)
     {
-        if ($class != 'Pop\Db\Record') {
+        if ($class != 'Pop\Db\Record' && !isset(static::$table)) {
             if (strpos($class, '_') !== false) {
                 $cls = substr($class, (strrpos($class, '_') + 1));
             } else if (strpos($class, '\\') !== false) {
@@ -630,6 +630,8 @@ class Record implements \ArrayAccess
             if (static::$prefix . $cls != static::$table) {
                 static::$table = static::$prefix . $cls;
             }
+        } else {
+            static::$table = static::$prefix . static::$table;
         }
     }
 
