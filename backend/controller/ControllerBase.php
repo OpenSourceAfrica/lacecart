@@ -17,7 +17,7 @@ use Pop\Http\Request,
     Pop\Nav\Nav;
 
 
-class BaseController extends AbstractController
+class ControllerBase extends AbstractController
 {
     private $services = null;
 
@@ -31,6 +31,10 @@ class BaseController extends AbstractController
     protected $view;
     protected $viewPath;
 
+    /**
+     * Construct for BaseController
+     * @param $services
+     */
     public function __construct($services)
     {
         $this->services = $services;
@@ -44,6 +48,11 @@ class BaseController extends AbstractController
         $this->response = new Response();
         $this->request = new Request();
         $this->nav = new Nav($nav['nav']['tree'], $nav['nav']['config']);
+
+        //send user to login if session is not active
+        if(!$this->session->user && $this->request->getPath(1) != 'account') {
+            $this->response->redirect($this->request->getBasePath() . '/' .$this->request->getPath(0) . '/account');
+        }
     }
 
     /**

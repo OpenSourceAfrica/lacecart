@@ -137,6 +137,10 @@ return [
                                         'href' => $request_base . '/configuration'
                                     ]
                                 ]
+                            ],
+                            [
+                                'name' => 'Logout',
+                                'href' => $request_base . '/account/logout'
                             ]
                 ],
 

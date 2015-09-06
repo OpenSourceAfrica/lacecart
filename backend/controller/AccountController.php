@@ -12,7 +12,7 @@ namespace LaceCart\Backend;
 
 use LaceCart\Library\Auth as Auth;
 
-class AccountController extends BaseController
+class AccountController extends ControllerBase
 {
     public function index()
     {
@@ -32,8 +32,16 @@ class AccountController extends BaseController
 
                 $auth = new Auth();
                 if($auth->login($username, $password)){
+
+                    //get user information and set in a session
+                    $user = Admin::findBy([
+                        'email' => $username
+                    ]);
+
+                    $this->session->user = $user;
+
                     //redirect to members area
-                    $this->response->redirect($this->request->getBasePath() . '/' .$this->request->getPath(0) . '/dashboard/');
+                    $this->response->redirect($this->request->getBasePath() . '/' .$this->request->getPath(0) . '/dashboard');
                 }
 
                 //show login error
@@ -49,10 +57,16 @@ class AccountController extends BaseController
         $this->response->send();
     }
 
+    public function logout()
+    {
+        $this->session->__unset('user');
+        $this->session->set_flashdata('logout', 'You have successfully logged out');
+        $this->response->redirect($this->request->getBasePath() . '/' .$this->request->getPath(0) . '/account');
+    }
+
     public function error()
     {
         // Handle a non-match route request
-        echo "here";
     }
 
 }

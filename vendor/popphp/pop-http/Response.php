@@ -228,6 +228,8 @@ class Response
 
         header("HTTP/{$version} {$code} " . self::$responseCodes[$code]);
         header("Location: {$url}");
+
+        exit;
     }
 
     /**
