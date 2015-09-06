@@ -38,6 +38,8 @@ class Session implements \ArrayAccess
      */
     private $sessionId = null;
 
+    private $flashSessKey = 'flash';
+
     /**
      * Constructor
      *
@@ -52,6 +54,12 @@ class Session implements \ArrayAccess
             session_start();
             $this->sessionId = session_id();
         }
+
+        // delete old flashdata (from last request)
+        $this->_flashdata_sweep();
+
+        // mark all new flashdata as old (data will be deleted before next request)
+        $this->_flashdata_mark();
     }
 
     /**
@@ -194,6 +202,108 @@ class Session implements \ArrayAccess
     public function offsetUnset($offset)
     {
         $this->__unset($offset);
+    }
+
+    /**
+     * Add or change flashdata, only available
+     * until the next request
+     *
+     * @access	public
+     * @param	mixed
+     * @param	string
+     * @return	void
+     */
+    function set_flashdata($newdata = array(), $newval = '')
+    {
+        if (is_string($newdata)) {
+            $newdata = array($newdata => $newval);
+        }
+
+        if (count($newdata) > 0) {
+            foreach ($newdata as $key => $val) {
+                $flashdata_key = $this->flashSessKey.':new:'.$key;
+                $this->__set($flashdata_key, $val);
+            }
+        }
+    }
+
+    // ------------------------------------------------------------------------
+
+    /**
+     * Keeps existing flashdata available to next request.
+     *
+     * @access	public
+     * @param	string
+     * @return	void
+     */
+    function keep_flashdata($key)
+    {
+        // 'old' flashdata gets removed.  Here we mark all
+        // flashdata as 'new' to preserve it from _flashdata_sweep()
+        // Note the function will return FALSE if the $key
+        // provided cannot be found
+        $old_flashdata_key = $this->flashSessKey.':old:'.$key;
+        $value = $this->__get($old_flashdata_key);
+
+        $new_flashdata_key = $this->flashSessKey.':new:'.$key;
+        $this->__set($new_flashdata_key, $value);
+    }
+
+    // ------------------------------------------------------------------------
+
+    /**
+     * Fetch a specific flashdata item from the session array
+     *
+     * @access	public
+     * @param	string
+     * @return	string
+     */
+    function flashdata($key)
+    {
+        $flashdata_key = $this->flashSessKey.':old:'.$key;
+        return $this->__get($flashdata_key);
+    }
+
+    // ------------------------------------------------------------------------
+
+    /**
+     * Identifies flashdata as 'old' for removal
+     * when _flashdata_sweep() runs.
+     *
+     * @access	private
+     * @return	void
+     */
+    function _flashdata_mark()
+    {
+        $userdata = $_SESSION;
+        foreach ($userdata as $name => $value) {
+            $parts = explode(':new:', $name);
+            if (is_array($parts) && count($parts) === 2) {
+                $new_name = $this->flashSessKey.':old:'.$parts[1];
+                $this->__set($new_name, $value);
+                $this->__unset($name);
+            }
+        }
+    }
+
+    // ------------------------------------------------------------------------
+
+    /**
+     * Removes all flashdata marked as 'old'
+     *
+     * @access	private
+     * @return	void
+     */
+
+    function _flashdata_sweep()
+    {
+        $userdata = $_SESSION;
+        foreach ($userdata as $key => $value) {
+            if (strpos($key, ':old:')) {
+                $this->__unset($key);
+            }
+        }
+
     }
 
 }

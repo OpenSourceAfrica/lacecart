@@ -8,6 +8,13 @@
 *  International Registered Trademark & Property of LaceCart Team
 */
 
+//Getting request object
+$request = new \Pop\Http\Request();
+$request_base = $request->getBasePath() . '/' .$request->getPath(0);
+
+//Getting backend folder
+$admin_folder = str_replace(realpath(__DIR__ . '/..'), '', realpath($config->pathTo->admin));
+
 $loader = new \Pop\Loader\ClassLoader();
 
 $autoLoadClasses = [

@@ -30,6 +30,11 @@ return [
             'call' => function () use ($config) {
                 return $config;
             }
+        ],
+        'nav' => [
+            'call' => function () use ($nav) {
+                return $nav;
+            }
         ]
     ]
 ];

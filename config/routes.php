@@ -8,30 +8,19 @@
 *  International Registered Trademark & Property of LaceCart Team
 */
 
-//Getting backend folder
-$admin_folder = str_replace(realpath(__DIR__ . '/..'), '', realpath($config->pathTo->admin));
-
 return [
     'routes' => [
         '/:controller/:action[/:param]' => [
-            'prefix' => 'LaceCart\Store\\',
-            'action'     => 'index',
-            'default'     => true
+            'prefix' => 'LaceCart\Store\\'
         ],
         '/:controller[/]' => [
-            'prefix' => 'LaceCart\Store\\',
-            'action'     => 'index',
-            'default'    => true
+            'prefix' => 'LaceCart\Store\\'
         ],
         $admin_folder .'/:controller/:action[/:param]' => [
-            'prefix' => 'LaceCart\Backend\\',
-            'action'     => 'index',
-            'default'     => true
+            'prefix' => 'LaceCart\Backend\\'
         ],
         $admin_folder . '/:controller[/]' => [
-            'prefix' => 'LaceCart\Backend\\',
-            'action'     => 'index',
-            'default'     => true
+            'prefix' => 'LaceCart\Backend\\'
         ],
     ]
 ];
