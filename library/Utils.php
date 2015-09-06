@@ -104,5 +104,62 @@ class Utils
             echo $pagination->create_links();
         }
     }
+
+    /**
+     * Build a select button from database
+     *
+     * @param sting $model
+     * @param string $drop_down_key_field
+     * @param string $drop_down_value_field
+     * @param string $drop_down_opt_field
+     * @param array $add_extra_fields
+     *
+     * @return mixed
+     */
+    static function build_dropdown_list($model, $drop_down_key_field, $drop_down_value_field, $drop_down_opt_field = '', $add_extra_fields = array())
+    {
+        $drop_down_list = [];
+        $drop_down_list[''] = "--Select--";
+
+        //if param is not null
+        if(!empty($param)){
+            $query = $model::findBy($param);
+        } else {
+            $query = $model::findAll();
+        }
+
+        if($query->hasRows()){
+            foreach($query->rows() as $row)
+            {
+                if(strlen($drop_down_opt_field) > 0){
+                    if(isset($row->$drop_down_opt_field)){
+                        $drop_down_list[$row->$drop_down_key_field] = $row->$drop_down_value_field." ".$row->$drop_down_opt_field;
+                    } else {
+                        throw new \Exception('Optional field is not a column in the DB');
+                    }
+                }
+                else
+                    $drop_down_list[$row->$drop_down_key_field] = $row->$drop_down_value_field;
+            }
+        }
+
+        asort($drop_down_list);
+
+        if(count($add_extra_fields) > 0)
+        {
+            foreach($add_extra_fields as $key => $val)
+            {
+                if(!array_key_exists($key, $drop_down_list))
+                    $drop_down_list[$key] = $val;
+                else
+                {
+                    //throw "Extra field array key exist error";
+                    throw new \Exception('Extra field array key exist error');
+                }
+            }
+        }
+
+       return $drop_down_list;
+    }
     
 }

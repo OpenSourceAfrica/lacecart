@@ -13,14 +13,8 @@ return [
         '/:controller/:action[/:param]' => [
             'prefix' => 'LaceCart\Store\\'
         ],
-        '/:controller[/]' => [
-            'prefix' => 'LaceCart\Store\\'
-        ],
-        $admin_folder .'/:controller/:action[/:param]' => [
+        $admin_folder .'/:controller[/:action][/:param]' => [
             'prefix' => 'LaceCart\Backend\\'
-        ],
-        $admin_folder . '/:controller[/]' => [
-            'prefix' => 'LaceCart\Backend\\'
-        ],
+        ]
     ]
 ];
