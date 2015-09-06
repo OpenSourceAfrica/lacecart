@@ -10,10 +10,11 @@
 
 namespace LaceCart\Backend;
 
-use Pop\Http\Request;
-use \Pop\Controller\AbstractController;
-use \Pop\View\View;
-use Pop\Http\Response;
+use Pop\Http\Request,
+    Pop\Controller\AbstractController,
+    Pop\View\View,
+    Pop\Http\Response,
+    Pop\Nav\Nav;
 
 
 class BaseController extends AbstractController
@@ -23,6 +24,7 @@ class BaseController extends AbstractController
     protected $db = null;
     protected $session = null;
     protected $config = null;
+    protected $nav = null;
 
     protected $response;
     protected $request;
@@ -36,10 +38,12 @@ class BaseController extends AbstractController
         $this->db = $this->services->get('db');
         $this->config = $this->services->get('config');
         $this->session = $this->services->get('session');
+        $nav = $this->services->get('nav');
 
         //set view path
         $this->response = new Response();
         $this->request = new Request();
+        $this->nav = new Nav($nav['nav']['tree'], $nav['nav']['config']);
     }
 
     /**
@@ -50,6 +54,8 @@ class BaseController extends AbstractController
     public function setView($view_path)
     {
         $this->view = new View($this->config->application->viewDir . '/' .$view_path . '.phtml');
+        $this->view->set('nav', $this->nav);
+        $this->view->set('session', $this->session);
         $this->view->set('request', $this->request);
         $this->view->set('header', $this->config->application->viewDir . '/partial/header.phtml');
         $this->view->set('footer', $this->config->application->viewDir . '/partial/footer.phtml');

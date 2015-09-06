@@ -33,6 +33,11 @@ try {
     include __DIR__ . "/config/loader.php";
 
     /**
+     * Read Navigation Configuration
+     */
+    $nav = include __DIR__ . "/config/nav.php";
+
+    /**
      * Handle the request
      */
     $application = new LaceCart\Application(

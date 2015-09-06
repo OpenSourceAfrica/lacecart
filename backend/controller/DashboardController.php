@@ -10,15 +10,18 @@
 
 namespace LaceCart\Backend;
 
-use Pop\Form\Form;
-
-class FormBase extends Form
+class DashboardController extends BaseController
 {
-    protected $form;
-
-    public function __construct()
+    public function index()
     {
-        $this->form = new form();
-        $this->form->setAttribute('id', 'my-form');
+        $this->setView('users/dashboard');
+        $this->view->title = 'Dashboard';
+        $this->response->setBody($this->view->render());
+        $this->response->send();
+    }
+
+    public function test()
+    {
+        echo "here";
     }
 }

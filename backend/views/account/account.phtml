@@ -2,6 +2,8 @@
 
 <form action="<?php echo $form->getAction(); ?>" method="<?php echo $form->getMethod(); ?>">
 
+    <p><?php echo $error ; ?></p>
+
     <p><?php echo $form->getElement('lace-admin-username')->getLabel(); ?> <?php echo $form->getElement('lace-admin-username') ; ?> </p>
     <p><?php echo $form->getElement('lace-admin-password')->getLabel(); ?> <?php echo $form->getElement('lace-admin-password') ; ?> </p>
     <p><?php echo $form->getElement('submit') ; ?></p>
