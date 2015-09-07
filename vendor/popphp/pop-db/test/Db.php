@@ -21,7 +21,7 @@ namespace Pop\Db;
  * @author     Nick Sagona, III <dev@nolainteractive.com>
  * @copyright  Copyright (c) 2009-2015 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    2.0.1
+ * @version    2.0.0
  */
 class Db
 {
@@ -100,41 +100,18 @@ class Db
             }
         }
 
-        $conn  = new $class($db);
-        $lines = file($sql);
+        $conn       = new $class($db);
+        $sql        = trim(file_get_contents($sql));
+        $statements = (strpos($sql, ";\r\n") !== false) ? ";\r\n" : ";\n";
+        $statements = explode($statements, $sql);
 
-        // Remove comments, execute queries
-        if (count($lines) > 0) {
-            $insideComment = false;
-            foreach ($lines as $i => $line) {
-                if ($insideComment) {
-                    if (substr($line, 0, 2) == '*/') {
-                        $insideComment = false;
-                    }
-                    unset($lines[$i]);
-                } else {
-                    if ((substr($line, 0, 1) == '-') || (substr($line, 0, 1) == '#')) {
-                        unset($lines[$i]);
-                    } else if (substr($line, 0, 2) == '/*') {
-                        $insideComment = true;
-                        unset($lines[$i]);
-                    }
+        foreach ($statements as $statement) {
+            if (!empty($statement)) {
+                if (isset($db['prefix'])) {
+                    $statement = str_replace('[{prefix}]', $db['prefix'], trim($statement));
                 }
-            }
-
-            $sqlString  = trim(implode('', $lines));
-            $newLine    = (strpos($sqlString, ";\r\n") !== false) ? ";\r\n" : ";\n";
-            $statements = explode($newLine, $sqlString);
-
-            foreach ($statements as $statement) {
-                if (!empty($statement)) {
-                    if (isset($db['prefix'])) {
-                        $statement = str_replace('[{prefix}]', $db['prefix'], trim($statement));
-                    }
-                    $conn->query($statement);
-                }
+                $conn->query($statement);
             }
         }
     }
-
 }

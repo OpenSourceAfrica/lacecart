@@ -14,16 +14,16 @@
 namespace Pop\Db\Sql;
 
 /**
- * Update SQL class
+ * Delete SQL class
  *
  * @category   Pop
  * @package    Pop_Db
  * @author     Nick Sagona, III <dev@nolainteractive.com>
  * @copyright  Copyright (c) 2009-2015 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    2.0.1
+ * @version    2.0.0
  */
-class Update extends AbstractSql
+class Delete extends AbstractSql
 {
 
     /**
@@ -35,8 +35,8 @@ class Update extends AbstractSql
     /**
      * Set the WHERE clause
      *
-     * @param  mixed $where
-     * @return Update
+     * @param  $where
+     * @return Delete
      */
     public function where($where = null)
     {
@@ -59,43 +59,18 @@ class Update extends AbstractSql
     }
 
     /**
-     * Render the UPDATE statement
+     * Render the DELETE statement
      *
      * @return string
      */
     public function render()
     {
-        // Start building the UPDATE statement
-        $sql = 'UPDATE ' . $this->sql->quoteId($this->sql->getTable()) . ' SET ';
-        $set = [];
-
-        $paramCount = 1;
-        $dbType = $this->sql->getDbType();
-
-        foreach ($this->columns as $column => $value) {
-            $colValue = (strpos($column, '.') !== false) ?
-                substr($column, (strpos($column, '.') + 1)) : $column;
-
-            // Check for named parameters
-            if ((':' . $colValue == substr($value, 0, strlen(':' . $colValue))) &&
-                ($dbType !== \Pop\Db\Sql::SQLITE) &&
-                ($dbType !== \Pop\Db\Sql::ORACLE)) {
-                if (($dbType == \Pop\Db\Sql::MYSQL) || ($dbType == \Pop\Db\Sql::SQLSRV)) {
-                    $value = '?';
-                } else if (($dbType == \Pop\Db\Sql::PGSQL) && (!$this->sql->getDb()->isPdo())) {
-                    $value = '$' . $paramCount;
-                    $paramCount++;
-                }
-            }
-            $val = (null === $value) ? 'NULL' : $this->sql->quote($value);
-            $set[] = $this->sql->quoteId($column) .' = ' . $val;
-        }
-
-        $sql .= implode(', ', $set);
+        // Start building the DELETE statement
+        $sql = 'DELETE FROM ' . $this->sql->quoteId($this->sql->getTable());
 
         // Build any WHERE clauses
         if (null !== $this->where) {
-            $sql .= ' WHERE ' . $this->where->render($paramCount);
+            $sql .= ' WHERE ' . $this->where;
         }
 
         // Build any ORDER BY clause

@@ -14,7 +14,7 @@ class Location extends AbstractModel
     /**
      * @var   string
      */
-    protected static $table = Database::COUNTRY;
+    protected $table = Database::COUNTRY;
 
     /**
      * @var   string

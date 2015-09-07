@@ -14,59 +14,78 @@
 namespace Pop\Db\Adapter;
 
 /**
- * SQLite Db adapter class
+ * PostgreSQL Db adapter class
  *
  * @category   Pop
  * @package    Pop_Db
  * @author     Nick Sagona, III <dev@nolainteractive.com>
  * @copyright  Copyright (c) 2009-2015 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    2.0.1
+ * @version    2.0.0
  */
-class Sqlite extends AbstractAdapter
+class Pgsql extends AbstractAdapter
 {
 
     /**
-     * Last result
-     * @var resource
+     * Statement index
+     * @var int
      */
-    protected $lastResult;
+    protected static $statementIndex = 0;
 
     /**
-     * Last SQL query
+     * Prepared statement name
      * @var string
      */
-    protected $lastSql = null;
+    protected $statementName = null;
+
+    /**
+     * Prepared statement parameters
+     * @var array
+     */
+    protected $parameters = null;
+
+    /**
+     * Prepared SQL string
+     * @var string
+     */
+    protected $sql = null;
 
     /**
      * Constructor
      *
-     * Instantiate the SQLite database connection object.
+     * Instantiate the PostgreSQL database connection object.
      *
      * @param  array $options
      * @throws Exception
-     * @return Sqlite
+     * @return Pgsql
      */
     public function __construct(array $options)
     {
-        // Select the DB to use, or display the SQL error.
-        if (!isset($options['database'])) {
-            throw new Exception('Error: The database file was not passed.');
-        } else if (!file_exists($options['database'])) {
-            throw new Exception('Error: The database file does not exists.');
+        // Default to localhost
+        if (!isset($options['host'])) {
+            $options['host'] = 'localhost';
         }
 
-        $this->connection = new \SQLite3($options['database']);
+        if (!isset($options['database']) || !isset($options['host']) || !isset($options['username']) || !isset($options['password'])) {
+            throw new Exception('Error: The proper database credentials were not passed.');
+        }
+
+        $this->connection = pg_connect("host=" . $options['host'] . " dbname=" . $options['database'] . " user=" . $options['username'] . " password=" . $options['password']);
+
+        // Select the DB to use, or display the SQL error.
+        if (!$this->connection) {
+            throw new Exception('Error: There was an error connecting to the database.');
+        }
     }
 
     /**
-     * Check if Sqlite is installed.
+     * Check if Pgsql is installed.
      *
      * @return boolean
      */
     public static function isInstalled()
     {
-        return self::isAvailable('sqlite');
+        return self::isAvailable('pgsql');
     }
 
     /**
@@ -77,41 +96,43 @@ class Sqlite extends AbstractAdapter
      */
     public function showError()
     {
-        throw new Exception('Error: ' . $this->connection->lastErrorCode() . ' => ' . $this->connection->lastErrorMsg() . '.');
+        throw new Exception(pg_last_error($this->connection) . '.');
     }
 
     /**
      * Prepare a SQL query.
      *
      * @param  string $sql
-     * @return Sqlite
+     * @return Pgsql
      */
     public function prepare($sql)
     {
-        $this->statement = $this->connection->prepare($sql);
+        $this->sql = $sql;
+        $this->statementName = 'pop_db_adapter_pgsql_statement_' . ++static::$statementIndex;
+        $this->statement = pg_prepare($this->connection, $this->statementName, $this->sql);
         return $this;
     }
 
     /**
      * Bind parameters to for a prepared SQL query.
      *
-     * @param  array  $params
-     * @return Sqlite
+     * @param  string|array  $params
+     * @return Pgsql
      */
     public function bindParams($params)
     {
-        foreach ($params as $dbColumnName => $dbColumnValue) {
-            if (is_array($dbColumnValue)) {
-                $i = 1;
-                foreach ($dbColumnValue as $dbColumnVal) {
-                    $dbColumnN = $dbColumnName . $i;
-                    ${$dbColumnN} = $dbColumnVal;
-                    $this->statement->bindParam(':' . $dbColumnN, ${$dbColumnN});
-                    $i++;
+        if (!is_array($params)) {
+            $this->parameters = [$params];
+        } else {
+            $this->parameters = [];
+            foreach ($params as $param) {
+                if (is_array($param)) {
+                    foreach ($param as $par) {
+                        $this->parameters[] = $par;
+                    }
+                } else {
+                    $this->parameters[] = $param;
                 }
-            } else {
-                ${$dbColumnName} = $dbColumnValue;
-                $this->statement->bindParam(':' . $dbColumnName, ${$dbColumnName});
             }
         }
 
@@ -146,7 +167,12 @@ class Sqlite extends AbstractAdapter
             throw new Exception('Error: The database statement resource is not currently set.');
         }
 
-        $this->result = $this->statement->execute();
+        if ((null !== $this->parameters) && is_array($this->parameters))  {
+            $this->result = pg_execute($this->connection, $this->statementName, $this->parameters);
+            $this->parameters = null;
+        } else {
+            $this->query($this->sql);
+        }
     }
 
     /**
@@ -157,13 +183,7 @@ class Sqlite extends AbstractAdapter
      */
     public function query($sql)
     {
-        if (stripos($sql, 'select') !== false) {
-            $this->lastSql = $sql;
-        } else {
-            $this->lastSql = null;
-        }
-
-        if (!($this->result = $this->connection->query($sql))) {
+        if (!($this->result = pg_query($this->connection, $sql))) {
             $this->showError();
         }
     }
@@ -180,7 +200,7 @@ class Sqlite extends AbstractAdapter
             throw new Exception('Error: The database result resource is not currently set.');
         }
 
-        return $this->result->fetchArray(SQLITE3_ASSOC);
+        return pg_fetch_array($this->result, null, PGSQL_ASSOC);
     }
 
     /**
@@ -191,7 +211,7 @@ class Sqlite extends AbstractAdapter
      */
     public function escape($value)
     {
-        return $this->connection->escapeString($value);
+        return pg_escape_string($value);
     }
 
     /**
@@ -201,29 +221,25 @@ class Sqlite extends AbstractAdapter
      */
     public function lastId()
     {
-        return $this->connection->lastInsertRowID();
+        $insert_query = pg_query("SELECT lastval();");
+        $insert_row = pg_fetch_row($insert_query);
+
+        return $insert_row[0];
     }
 
     /**
      * Return the number of rows in the result.
      *
+     * @throws Exception
      * @return int
      */
     public function numberOfRows()
     {
-        if (null === $this->lastSql) {
-            return $this->connection->changes();
-        } else {
-            if (!($this->lastResult = $this->connection->query($this->lastSql))) {
-                $this->showError();
-            } else {
-                $num = 0;
-                while (($row = $this->lastResult->fetcharray(SQLITE3_ASSOC)) != false) {
-                    $num++;
-                }
-                return $num;
-            }
+        if (!isset($this->result)) {
+            throw new Exception('Error: The database result resource is not currently set.');
         }
+
+        return pg_num_rows($this->result);
     }
 
     /**
@@ -238,7 +254,7 @@ class Sqlite extends AbstractAdapter
             throw new Exception('Error: The database result resource is not currently set.');
         }
 
-        return $this->result->numColumns();
+        return pg_num_fields($this->result);
     }
 
     /**
@@ -248,8 +264,8 @@ class Sqlite extends AbstractAdapter
      */
     public function version()
     {
-        $ver = $this->connection->version();
-        return 'SQLite ' . $ver['versionString'];
+        $ver = pg_version($this->connection);
+        return 'PostgreSQL ' . $ver['server'];
     }
 
     /**
@@ -260,7 +276,7 @@ class Sqlite extends AbstractAdapter
     public function disconnect()
     {
         if ($this->isConnected()) {
-            $this->connection->close();
+            pg_close($this->connection);
         }
     }
 
@@ -272,11 +288,12 @@ class Sqlite extends AbstractAdapter
     protected function loadTables()
     {
         $tables = [];
-        $sql = "SELECT name FROM sqlite_master WHERE type IN ('table', 'view') AND name NOT LIKE 'sqlite_%' UNION ALL SELECT name FROM sqlite_temp_master WHERE type IN ('table', 'view') ORDER BY 1";
 
-        $this->query($sql);
+        $this->query("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'");
         while (($row = $this->fetch()) != false) {
-            $tables[] = $row['name'];
+            foreach($row as $value) {
+                $tables[] = $value;
+            }
         }
 
         return $tables;

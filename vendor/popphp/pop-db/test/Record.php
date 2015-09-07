@@ -290,8 +290,8 @@ class Record implements \ArrayAccess
 
         $db = static::db();
         $db->prepare($sql)
-           ->bindParams($params)
-           ->execute();
+            ->bindParams($params)
+            ->execute();
 
         $record = new static();
         if (strtoupper(substr($sql, 0, 6)) == 'SELECT') {
@@ -369,16 +369,16 @@ class Record implements \ArrayAccess
         if (null === $columns) {
             $this->columns = [];
             $this->rows    = [];
-        // Else, if an array, set the columns.
+            // Else, if an array, set the columns.
         } else if ($columns instanceof \ArrayObject) {
             $this->columns = (array)$columns;
             $this->rows[0] = $columns;
-        // Else, if an array, set the columns.
+            // Else, if an array, set the columns.
         } else if (is_array($columns)) {
             $this->columns       = $columns;
             $this->rows[0]       = $columns;
             $this->rowObjects[0] = new \ArrayObject($columns, \ArrayObject::ARRAY_AS_PROPS);
-        // Else, throw an exception.
+            // Else, throw an exception.
         } else {
             throw new Exception('The parameter passed must be either an array or null.');
         }
@@ -562,7 +562,7 @@ class Record implements \ArrayAccess
             $this->rg()->setColumns($this->columns);
             $this->rg()->save($this->isNew);
             $this->setRows([$this->rg()->getColumns()]);
-        // Else, save multiple rows
+            // Else, save multiple rows
         } else {
             $this->tg()->insert($columns);
             $this->setRows($this->tg()->getRows());
@@ -590,7 +590,7 @@ class Record implements \ArrayAccess
             if (isset($this->rowObjects[0])) {
                 unset($this->rowObjects[0]);
             }
-        // Delete multiple rows
+            // Delete multiple rows
         } else {
             $parsedColumns = static::parseColumns($columns, $this->getSql()->getPlaceholder());
             $this->tg()->delete($parsedColumns['where'], $parsedColumns['params']);
@@ -687,7 +687,7 @@ class Record implements \ArrayAccess
                 } else {
                     $where[] = $column . ' IS NULL' . $combine;
                 }
-            // IN or NOT IN
+                // IN or NOT IN
             } else if (is_array($value)) {
                 if (substr($column, -1) == '-') {
                     $column  = substr($column, 0, -1);
@@ -695,7 +695,7 @@ class Record implements \ArrayAccess
                 } else {
                     $where[] = $column . ' IN (' . implode(', ', $value) . ')' . $combine;
                 }
-            // BETWEEN or NOT BETWEEN
+                // BETWEEN or NOT BETWEEN
             } else if ((substr($value, 0, 1) == '(') && (substr($value, -1) == ')') &&
                 (strpos($value, ',') !== false)) {
                 if (substr($column, -1) == '-') {
@@ -704,7 +704,7 @@ class Record implements \ArrayAccess
                 } else {
                     $where[] = $column . ' BETWEEN ' . $value . $combine;
                 }
-            // LIKE or NOT LIKE
+                // LIKE or NOT LIKE
             } else if ((substr($value, 0, 2) == '-%') || (substr($value, -2) == '%-') ||
                 (substr($value, 0, 1) == '%') || (substr($value, -1) == '%')) {
                 $op = ((substr($value, 0, 2) == '-%') || (substr($value, -2) == '%-')) ? 'NOT LIKE' : 'LIKE';
@@ -732,7 +732,7 @@ class Record implements \ArrayAccess
                 } else {
                     $params[$column] = $value;
                 }
-            // Standard operators
+                // Standard operators
             } else {
                 $column  = $operator['column'];
                 $where[] = $column . ' ' . $operator['op'] . ' ' .  $pHolder . $combine;

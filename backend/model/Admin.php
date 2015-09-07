@@ -15,15 +15,10 @@ class Admin extends AbstractModel
     /**
      * @var   string
      */
-    protected static $table = Database::ADMINISTRATOR;
+    protected $table = Database::ADMINISTRATOR;
 
     /**
      * @var   string
      */
     protected $primaryKeys = [Database::ADMINISTRATOR_PRIMARY_KEY];
-
-    /**
-     * @var   boolean
-     */
-    protected $auto = true;
 }

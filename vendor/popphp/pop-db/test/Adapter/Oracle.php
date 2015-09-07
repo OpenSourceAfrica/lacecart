@@ -14,59 +14,53 @@
 namespace Pop\Db\Adapter;
 
 /**
- * SQLite Db adapter class
+ * Oracle Db adapter class
  *
  * @category   Pop
  * @package    Pop_Db
  * @author     Nick Sagona, III <dev@nolainteractive.com>
  * @copyright  Copyright (c) 2009-2015 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    2.0.1
+ * @version    2.0.0
  */
-class Sqlite extends AbstractAdapter
+class Oracle extends AbstractAdapter
 {
-
-    /**
-     * Last result
-     * @var resource
-     */
-    protected $lastResult;
-
-    /**
-     * Last SQL query
-     * @var string
-     */
-    protected $lastSql = null;
 
     /**
      * Constructor
      *
-     * Instantiate the SQLite database connection object.
+     * Instantiate the Oracle database connection object.
      *
      * @param  array $options
      * @throws Exception
-     * @return Sqlite
+     * @return Oracle
      */
     public function __construct(array $options)
     {
-        // Select the DB to use, or display the SQL error.
-        if (!isset($options['database'])) {
-            throw new Exception('Error: The database file was not passed.');
-        } else if (!file_exists($options['database'])) {
-            throw new Exception('Error: The database file does not exists.');
+        // Default to localhost
+        if (!isset($options['host'])) {
+            $options['host'] = 'localhost';
         }
 
-        $this->connection = new \SQLite3($options['database']);
+        if (!isset($options['database']) || !isset($options['host']) || !isset($options['username']) || !isset($options['password'])) {
+            throw new Exception('Error: The proper database credentials were not passed.');
+        }
+
+        $this->connection = oci_connect($options['username'], $options['password'], $options['host'] . '/' . $options['database']);
+
+        if ($this->connection == false) {
+            throw new Exception('Error: Could not connect to database. ' . oci_error());
+        }
     }
 
     /**
-     * Check if Sqlite is installed.
+     * Check if Oracle is installed.
      *
      * @return boolean
      */
     public static function isInstalled()
     {
-        return self::isAvailable('sqlite');
+        return self::isAvailable('oracle');
     }
 
     /**
@@ -77,18 +71,18 @@ class Sqlite extends AbstractAdapter
      */
     public function showError()
     {
-        throw new Exception('Error: ' . $this->connection->lastErrorCode() . ' => ' . $this->connection->lastErrorMsg() . '.');
+        throw new Exception('Error: ' . oci_error($this->connection));
     }
 
     /**
      * Prepare a SQL query.
      *
      * @param  string $sql
-     * @return Sqlite
+     * @return Oracle
      */
     public function prepare($sql)
     {
-        $this->statement = $this->connection->prepare($sql);
+        $this->statement = oci_parse($this->connection, $sql);
         return $this;
     }
 
@@ -96,7 +90,7 @@ class Sqlite extends AbstractAdapter
      * Bind parameters to for a prepared SQL query.
      *
      * @param  array  $params
-     * @return Sqlite
+     * @return Oracle
      */
     public function bindParams($params)
     {
@@ -104,14 +98,13 @@ class Sqlite extends AbstractAdapter
             if (is_array($dbColumnValue)) {
                 $i = 1;
                 foreach ($dbColumnValue as $dbColumnVal) {
-                    $dbColumnN = $dbColumnName . $i;
-                    ${$dbColumnN} = $dbColumnVal;
-                    $this->statement->bindParam(':' . $dbColumnN, ${$dbColumnN});
+                    ${$dbColumnName . $i} = $dbColumnVal;
+                    oci_bind_by_name($this->statement, ':' . $dbColumnName . $i, ${$dbColumnName . $i});
                     $i++;
                 }
             } else {
                 ${$dbColumnName} = $dbColumnValue;
-                $this->statement->bindParam(':' . $dbColumnName, ${$dbColumnName});
+                oci_bind_by_name($this->statement, ':' . $dbColumnName, ${$dbColumnName});
             }
         }
 
@@ -146,7 +139,7 @@ class Sqlite extends AbstractAdapter
             throw new Exception('Error: The database statement resource is not currently set.');
         }
 
-        $this->result = $this->statement->execute();
+        oci_execute($this->statement);
     }
 
     /**
@@ -157,13 +150,8 @@ class Sqlite extends AbstractAdapter
      */
     public function query($sql)
     {
-        if (stripos($sql, 'select') !== false) {
-            $this->lastSql = $sql;
-        } else {
-            $this->lastSql = null;
-        }
-
-        if (!($this->result = $this->connection->query($sql))) {
+        $this->statement = oci_parse($this->connection, $sql);
+        if (!($this->result = oci_execute($this->statement))) {
             $this->showError();
         }
     }
@@ -176,11 +164,11 @@ class Sqlite extends AbstractAdapter
      */
     public function fetch()
     {
-        if (!isset($this->result)) {
+        if (!isset($this->statement)) {
             throw new Exception('Error: The database result resource is not currently set.');
         }
 
-        return $this->result->fetchArray(SQLITE3_ASSOC);
+        return oci_fetch_array($this->statement, OCI_RETURN_NULLS+OCI_ASSOC);
     }
 
     /**
@@ -191,7 +179,10 @@ class Sqlite extends AbstractAdapter
      */
     public function escape($value)
     {
-        return $this->connection->escapeString($value);
+        $search = ['\\', "\n", "\r", "\x00", "\x1a", '\'', '"'];
+        $replace = ['\\\\', "\\n", "\\r", "\\x00", "\\x1a", '\\\'', '\\"'];
+
+        return str_replace($search, $replace, $value);
     }
 
     /**
@@ -201,28 +192,21 @@ class Sqlite extends AbstractAdapter
      */
     public function lastId()
     {
-        return $this->connection->lastInsertRowID();
+        return null;
     }
 
     /**
      * Return the number of rows in the result.
      *
+     * @throws Exception
      * @return int
      */
     public function numberOfRows()
     {
-        if (null === $this->lastSql) {
-            return $this->connection->changes();
+        if (isset($this->statement)) {
+            return oci_num_rows($this->statement);
         } else {
-            if (!($this->lastResult = $this->connection->query($this->lastSql))) {
-                $this->showError();
-            } else {
-                $num = 0;
-                while (($row = $this->lastResult->fetcharray(SQLITE3_ASSOC)) != false) {
-                    $num++;
-                }
-                return $num;
-            }
+            throw new Exception('Error: The database result resource is not currently set.');
         }
     }
 
@@ -234,11 +218,11 @@ class Sqlite extends AbstractAdapter
      */
     public function numberOfFields()
     {
-        if (!isset($this->result)) {
+        if (isset($this->statement)) {
+            return oci_num_fields($this->statement);
+        } else {
             throw new Exception('Error: The database result resource is not currently set.');
         }
-
-        return $this->result->numColumns();
     }
 
     /**
@@ -248,8 +232,7 @@ class Sqlite extends AbstractAdapter
      */
     public function version()
     {
-        $ver = $this->connection->version();
-        return 'SQLite ' . $ver['versionString'];
+        return oci_server_version($this->connection);
     }
 
     /**
@@ -260,7 +243,7 @@ class Sqlite extends AbstractAdapter
     public function disconnect()
     {
         if ($this->isConnected()) {
-            $this->connection->close();
+            oci_close($this->connection);
         }
     }
 
@@ -272,11 +255,12 @@ class Sqlite extends AbstractAdapter
     protected function loadTables()
     {
         $tables = [];
-        $sql = "SELECT name FROM sqlite_master WHERE type IN ('table', 'view') AND name NOT LIKE 'sqlite_%' UNION ALL SELECT name FROM sqlite_temp_master WHERE type IN ('table', 'view') ORDER BY 1";
 
-        $this->query($sql);
+        $this->query("SELECT TABLE_NAME FROM USER_TABLES");
         while (($row = $this->fetch()) != false) {
-            $tables[] = $row['name'];
+            foreach($row as $value) {
+                $tables[] = $value;
+            }
         }
 
         return $tables;
