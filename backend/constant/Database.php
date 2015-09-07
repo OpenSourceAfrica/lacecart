@@ -17,7 +17,9 @@ class Database
     const ADMINISTRATOR = 'administrator';
     const PERMISSIONS = 'permissions';
     const DEPARTMENTS = 'departments';
+    const COUNTRY = 'countries';
 
     //Primary Keys
     const ADMINISTRATOR_PRIMARY_KEY = 'admin_id';
+    const COUNTRY_PRIMARY_KEY = 'id';
 }
