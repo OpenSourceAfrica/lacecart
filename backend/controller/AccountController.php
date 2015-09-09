@@ -37,7 +37,8 @@ class AccountController extends ControllerBase
                     $user = Admin::findBy([
                         'email' => $username
                     ]);
-
+                    $user->last_seen = date('Y-m-d H:i:s');
+                    $user->save();
                     $this->session->user = $user;
 
                     //redirect to members area
@@ -60,7 +61,8 @@ class AccountController extends ControllerBase
     public function logout()
     {
         $this->session->__unset('user');
-        $this->session->set_flashdata('logout', 'You have successfully logged out');
+        //$this->session->set_flashdata('logout', 'You have successfully logged out');
+        $this->session->setRequestValue('logout', 'You have successfully logged out', 1);
         $this->response->redirect($this->request->getBasePath() . '/' .$this->request->getPath(0) . '/account');
     }
 

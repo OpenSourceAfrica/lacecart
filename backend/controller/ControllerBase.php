@@ -66,6 +66,7 @@ class ControllerBase extends AbstractController
         $this->view->set('nav', $this->nav);
         $this->view->set('session', $this->session);
         $this->view->set('request', $this->request);
+        $this->view->set('basepath', $this->request->getBasePath() . '/' . $this->request->getPath(0));
         $this->view->set('header', $this->config->application->viewDir . '/partial/header.phtml');
         $this->view->set('footer', $this->config->application->viewDir . '/partial/footer.phtml');
     }

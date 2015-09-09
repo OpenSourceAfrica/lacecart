@@ -1,14 +1,19 @@
 <?php include $header ; ?>
 <?php echo $nav ; ?>
+
+<a href="<?php echo $basepath ; ?>/locations/add">Add Country</a>
 <table>
     <th>
-        <tr><td>Country</td><td>ISO Code 2</td><td>ISO Code 3</td></tr>
+        <tr style="background-color: yellow"><td>Country</td><td>ISO Code 2</td><td>ISO Code 3</td><td>&nbsp;</td></tr>
     </th>
     <?php foreach($location->rows() as $row) : ?>
         <tr>
-            <td><?php echo $row->name ; ?></td>
+            <td><a href="<?php echo $basepath ; ?>/locations/viewzones/<?php echo $row->id ; ?>"><?php echo $row->name ; ?></a></td>
             <td><?php echo $row->iso_code_2 ; ?></td>
-            <td><?php echo $row->iso_code_3 ; ?></td></tr>
+            <td><?php echo $row->iso_code_3 ; ?></td>
+            <td><a href="">Add Zone</a> | <a href="<?php echo $basepath ; ?>/locations/edit/<?php echo $row->id ; ?>">Edit</a> | <a href="/<?php echo $basepath ; ?>/locations/delete/<?php echo $row->id ; ?>">Delete</a></td>
+        </tr>
     <?php endforeach ; ?>
 </table>
+
 <?php include $footer ; ?>

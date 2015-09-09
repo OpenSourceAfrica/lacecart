@@ -9,9 +9,7 @@
 namespace LaceCart\Backend;
 
 
-use LaceCart\Library\Utils,
-    LaceCart\Backend\Location;
-use Pop\Pdf\Build\Font\TrueType\Table\Loca;
+use LaceCart\Library\Utils;
 
 class LocationsController extends ControllerBase
 {
@@ -27,12 +25,44 @@ class LocationsController extends ControllerBase
         $this->response->send();
     }
 
+    public function view($id)
+    {
+
+    }
+
+    public function viewzones($id = '')
+    {
+        $location_zones = LocationZones::findBy(['country_id' => $id]);
+
+        $this->setView('location/zones');
+        $this->view->title = 'Location Zones';
+        $this->view->location_zones = $location_zones;
+        $this->response->setBody($this->view->render());
+        $this->response->send();
+    }
+
     public function add()
+    {
+        echo "here";
+    }
+
+    public function addzones()
+    {
+
+    }
+
+    public function addzoneareas()
     {
 
     }
 
     public function edit($id)
+    {
+
+    }
+
+
+    public function addzone()
     {
 
     }

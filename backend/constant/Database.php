@@ -18,8 +18,10 @@ class Database
     const PERMISSIONS = 'permissions';
     const DEPARTMENTS = 'departments';
     const COUNTRY = 'countries';
+    const COUNTRY_ZONES = 'country_zones';
+    const COUNTRY_ZONE_AREA = 'country_zone_area';
 
     //Primary Keys
+    const PRIMARY_KEY = 'id';
     const ADMINISTRATOR_PRIMARY_KEY = 'admin_id';
-    const COUNTRY_PRIMARY_KEY = 'id';
 }
