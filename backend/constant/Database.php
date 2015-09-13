@@ -19,7 +19,7 @@ class Database
     const DEPARTMENTS = 'departments';
     const COUNTRY = 'countries';
     const COUNTRY_ZONES = 'country_zones';
-    const COUNTRY_ZONE_AREA = 'country_zone_area';
+    const COUNTRY_ZONE_AREAS = 'country_zone_areas';
 
     //Primary Keys
     const PRIMARY_KEY = 'id';

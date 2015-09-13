@@ -4258,8 +4258,10 @@ DROP TABLE IF EXISTS `country_zone_areas`;
 CREATE TABLE `country_zone_areas` (
   `id` int(11) NOT NULL,
   `zone_id` int(11) NOT NULL,
-  `code` varchar(15) NOT NULL,
+  `name` VARCHAR(50) NOT NULL,
+  `code` varchar(10) NOT NULL,
   `tax` float(10,5) NOT NULL DEFAULT '0.00000',
+  `status` ENUM("active","disable","delete") NOT NULL DEFAULT 'active',
   PRIMARY KEY (`id`),
   FOREIGN KEY (`zone_id`) REFERENCES country_zones(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

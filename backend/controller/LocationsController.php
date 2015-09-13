@@ -8,14 +8,10 @@
 
 namespace LaceCart\Backend;
 
-
-use LaceCart\Library\Utils;
-
 class LocationsController extends ControllerBase
 {
     public function index()
     {
-        //print_r(Utils::build_dropdown_list('\LaceCart\Backend\Admin', 'email', 'admin_id', 'test'));
         $location = Location::findAll();
 
         $this->setView('location/countries');
@@ -25,12 +21,7 @@ class LocationsController extends ControllerBase
         $this->response->send();
     }
 
-    public function view($id)
-    {
-
-    }
-
-    public function viewzones($id = '')
+    public function view($id = '')
     {
         $location_zones = LocationZones::findBy(['country_id' => $id]);
 
@@ -41,29 +32,69 @@ class LocationsController extends ControllerBase
         $this->response->send();
     }
 
+    public function viewzones($id = '')
+    {
+        $location_zone_areas = LocationZoneAreas::findBy(['zone_id' => $id]);
+
+        $this->setView('location/zone_areas');
+        $this->view->title = 'Location Zone Areas';
+        $this->view->location_zone_areas = $location_zone_areas;
+        $this->response->setBody($this->view->render());
+        $this->response->send();
+    }
+
     public function add()
     {
-        echo "here";
+        $location = new LocationForm();
+        $form = $location->form();
+
+        if ($this->request->isPost()) {
+
+            $form->setFieldValues($this->request->getPost());
+
+            if ($form->isValid()) {
+
+                $country_name = $this->request->getPost('lace-country-name'); //get country
+                $country_iso3 = $this->request->getPost('lace-country-iso3'); //get iso3
+                $country_iso2 = $this->request->getPost('lace-country-iso2'); //get iso2
+                $post_code = $this->request->getPost('lace-postcode'); //get post code
+                $enabled = $this->request->getPost('lace-enabled'); //get enabled
+
+                $location = new Location();
+                $location->save([
+                    'name' => $country_name,
+                    'iso_code_3' => $country_iso3,
+                    'iso_code_2' => $country_iso2,
+                    'postcode_required' => isset($post_code) ? $post_code : 0,
+                    'status' => isset($enabled) ? $enabled : 0
+                ]);
+
+                //redirect to country
+                $this->session->setRequestValue('success', 'Country Successfully Added', 1);
+                $this->response->redirect($this->request->getBasePath() . '/' .$this->request->getPath(0) . '/locations');
+            }
+        }
+
+        $this->setView('location/add_country');
+        $this->view->title = 'Add Location';
+        $this->view->form = $form;
+        $this->response->setBody($this->view->render());
+        $this->response->send();
     }
-
-    public function addzones()
-    {
-
-    }
-
-    public function addzoneareas()
-    {
-
-    }
-
-    public function edit($id)
-    {
-
-    }
-
 
     public function addzone()
     {
 
     }
+
+    public function addzonesarea()
+    {
+
+    }
+
+    public function edit($id = '')
+    {
+
+    }
+
 }
