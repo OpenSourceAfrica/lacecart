@@ -44,8 +44,8 @@ class LocationForm extends FormBase
             ]);
 
         $postcode_required = new Input\Checkbox('lace-postcode', '1');
-        $postcode_required->setLabel('Post Code Required:')
-            ->setAttributes(['checked' => 'checked']);
+        $postcode_required->setLabel('Post Code Required:');
+            //->setAttributes(['checked' => 'checked']);
 
         $enabled = new Input\Checkbox('lace-enabled', '1');
         $enabled->setLabel('Enable:');

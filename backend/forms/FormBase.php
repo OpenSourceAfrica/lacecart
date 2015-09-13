@@ -10,15 +10,18 @@
 
 namespace LaceCart\Backend;
 
-use Pop\Form\Form;
+use Pop\Form\Form,
+    Pop\Http\Request;
 
 class FormBase extends Form
 {
     protected $form;
+    protected $request;
 
     public function __construct()
     {
         $this->form = new form();
         $this->form->setAttribute('id', 'my-form');
+        $this->request = new Request();
     }
 }

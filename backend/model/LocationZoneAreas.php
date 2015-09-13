@@ -9,12 +9,12 @@
 namespace LaceCart\Backend;
 
 
-class LocationZones extends AbstractModel
+class LocationZoneAreas extends AbstractModel
 {
     /**
      * @var   string
      */
-    protected $table = Database::COUNTRY_ZONES;
+    protected $table = Database::COUNTRY_ZONE_AREAS;
 
     /**
      * @var   string

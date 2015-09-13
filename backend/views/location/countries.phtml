@@ -8,7 +8,7 @@
     </th>
     <?php foreach($location->rows() as $row) : ?>
         <tr>
-            <td><a href="<?php echo $basepath ; ?>/locations/viewzones/<?php echo $row->id ; ?>"><?php echo $row->name ; ?></a></td>
+            <td><a href="<?php echo $basepath ; ?>/locations/view/<?php echo $row->id ; ?>"><?php echo $row->name ; ?></a></td>
             <td><?php echo $row->iso_code_2 ; ?></td>
             <td><?php echo $row->iso_code_3 ; ?></td>
             <td><a href="">Add Zone</a> | <a href="<?php echo $basepath ; ?>/locations/edit/<?php echo $row->id ; ?>">Edit</a> | <a href="/<?php echo $basepath ; ?>/locations/delete/<?php echo $row->id ; ?>">Delete</a></td>
