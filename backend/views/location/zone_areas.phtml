@@ -1,0 +1,16 @@
+<?php include $header ; ?>
+<?php echo $nav ; ?>
+    <a href="<?php echo $basepath ; ?>/location/addzone">Add Zone</a>
+    <table>
+        <th>
+            <tr style="background-color: yellow"><td>Zone</td><td>Code</td><td>&nbsp;</td></tr>
+        </th>
+        <?php foreach($location_zones->rows() as $row) : ?>
+            <tr>
+                <td><a href="<?php echo $basepath ; ?>/location/viewzonearea/<?php echo $row->id ; ?>"><?php echo $row->name ; ?></a></td>
+                <td><?php echo $row->code ; ?></td>
+                <td><a href="">Add Zone Area</a> | <a href="<?php echo $basepath ; ?>/location/editzone/<?php echo $row->id ; ?>">Edit</a> | <a href="<?php echo $basepath ; ?>/location/deletezone/<?php echo $row->id ; ?>">Disable</a></td>
+            </tr>
+        <?php endforeach ; ?>
+    </table>
+<?php include $footer ; ?>

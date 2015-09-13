@@ -1,0 +1,17 @@
+<?php include $header ; ?>
+<?php echo $nav ; ?>
+
+    <form action="<?php echo $form->getAction(); ?>" method="<?php echo $form->getMethod(); ?>">
+
+        <p><?php echo $session->success ; ?></p>
+
+        <p><?php echo $form->getElement('lace-country-name')->getLabel(); ?> <?php echo $form->getElement('lace-country-name') ; ?> </p>
+        <p><?php echo $form->getElement('lace-country-iso3')->getLabel(); ?> <?php echo $form->getElement('lace-country-iso3') ; ?> </p>
+        <p><?php echo $form->getElement('lace-country-iso2')->getLabel(); ?> <?php echo $form->getElement('lace-country-iso2') ; ?> </p>
+        <p><?php echo $form->getElement('lace-postcode')->getLabel(); ?> <?php echo $form->getElement('lace-postcode') ; ?> </p>
+        <p><?php echo $form->getElement('lace-enabled')->getLabel(); ?> <?php echo $form->getElement('lace-enabled') ; ?> </p>
+        <p><?php echo $form->getElement('submit') ; ?></p>
+
+    </form>
+
+<?php include $footer ; ?>
