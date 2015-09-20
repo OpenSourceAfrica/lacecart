@@ -1,0 +1,15 @@
+<?php include $header ; ?>
+<?php echo $nav ; ?>
+
+    <form action="<?php echo $form->getAction(); ?>" method="<?php echo $form->getMethod(); ?>">
+
+        <p><?php echo $session->success ; ?></p>
+
+        <p><?php echo $form->getElement('lace-zone-name')->getLabel(); ?> <?php echo $form->getElement('lace-zone-name') ; ?> </p>
+        <p><?php echo $form->getElement('lace-zone-code')->getLabel(); ?> <?php echo $form->getElement('lace-zone-code') ; ?> </p>
+        <p><?php echo $form->getElement('lace-enabled')->getLabel(); ?> <?php echo $form->getElement('lace-enabled') ; ?> </p>
+        <p><?php echo $form->getElement('submit') ; ?></p>
+
+    </form>
+
+<?php include $footer ; ?>
