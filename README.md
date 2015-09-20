@@ -39,7 +39,7 @@ HOW TO CONTRIBUTE
 1. Fork the project by click on the fork button on https://github.com/OpenSourceAfrica to your git account.
 2. Clone the project from your git account by running
 ```
-git clone https://github.com/<your-git-account>/lacecart.git
+	git clone https://github.com/<your-git-account>/lacecart.git
 ```
 3. Pull any new changes from the remote repo to make sure your local repo is up to date by running below command on your terminal
 ```

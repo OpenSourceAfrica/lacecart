@@ -51,7 +51,7 @@ CREATE TABLE `permissions` (
 
 DROP TABLE IF EXISTS `countries`;
 CREATE TABLE `countries` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `sequence` int(11) NOT NULL DEFAULT '0',
   `name` varchar(128) NOT NULL,
   `iso_code_2` varchar(2) NOT NULL DEFAULT '',
@@ -306,7 +306,7 @@ INSERT INTO `countries` (`id`, `sequence`, `name`, `iso_code_2`, `iso_code_3`, `
 
 DROP TABLE IF EXISTS `country_zones`;
 CREATE TABLE `country_zones` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `country_id` int(11) NOT NULL,
   `code` varchar(32) NOT NULL DEFAULT '',
   `name` varchar(128) NOT NULL,
@@ -4256,7 +4256,7 @@ INSERT INTO `country_zones` (`id`, `country_id`, `code`, `name`, `status`, `tax`
 
 DROP TABLE IF EXISTS `country_zone_areas`;
 CREATE TABLE `country_zone_areas` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `zone_id` int(11) NOT NULL,
   `name` VARCHAR(50) NOT NULL,
   `code` varchar(10) NOT NULL,
