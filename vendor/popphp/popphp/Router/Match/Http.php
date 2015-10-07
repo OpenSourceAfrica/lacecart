@@ -7,12 +7,10 @@
  * @copyright  Copyright (c) 2009-2015 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
-
 /**
  * @namespace
  */
 namespace Pop\Router\Match;
-
 /**
  * Pop router HTTP match class
  *
@@ -21,29 +19,25 @@ namespace Pop\Router\Match;
  * @author     Nick Sagona, III <dev@nolainteractive.com>
  * @copyright  Copyright (c) 2009-2015 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    2.0.1
+ * @version    2.0.2
  */
 class Http extends AbstractMatch
 {
-
     /**
      * Base path
      * @var string
      */
     protected $basePath = null;
-
     /**
      * Array of segments
      * @var array
      */
     protected $segments = [];
-
     /**
      * Segment string
      * @var array
      */
     protected $segmentString = null;
-
     /**
      * Constructor
      *
@@ -56,7 +50,6 @@ class Http extends AbstractMatch
         $this->setBasePath();
         $this->setSegments();
     }
-
     /**
      * Set the base path
      *
@@ -68,7 +61,6 @@ class Http extends AbstractMatch
         $this->basePath = (!empty($basePath) ? $basePath : '');
         return $this;
     }
-
     /**
      * Set the route segments
      *
@@ -79,12 +71,10 @@ class Http extends AbstractMatch
         $path = ($this->basePath != '') ?
             substr($_SERVER['REQUEST_URI'], strlen($this->basePath)) :
             $_SERVER['REQUEST_URI'];
-
         // Trim query string, if present
         if (strpos($path, '?')) {
             $path = substr($path, 0, strpos($path, '?'));
         }
-
         // Trim trailing slash, if present
         if (substr($path, -1) == '/') {
             $path = substr($path, 0, -1);
@@ -92,7 +82,6 @@ class Http extends AbstractMatch
         } else {
             $trailingSlash = null;
         }
-
         if ($path == '') {
             $this->segments      = ['index'];
             $this->segmentString = '/';
@@ -100,10 +89,8 @@ class Http extends AbstractMatch
             $this->segments      = explode('/', substr($path, 1));
             $this->segmentString = '/' . implode('/', $this->segments) . $trailingSlash;
         }
-
         return $this;
     }
-
     /**
      * Get the base path
      *
@@ -113,7 +100,6 @@ class Http extends AbstractMatch
     {
         return $this->basePath;
     }
-
     /**
      * Get the route segments
      *
@@ -123,7 +109,6 @@ class Http extends AbstractMatch
     {
         return $this->segments;
     }
-
     /**
      * Get the route segment string
      *
@@ -133,7 +118,6 @@ class Http extends AbstractMatch
     {
         return $this->segmentString;
     }
-
     /**
      * Match the route to the controller class. Possible matches are:
      *
@@ -152,9 +136,7 @@ class Http extends AbstractMatch
     public function match($routes)
     {
         $this->prepareRoutes($routes);
-
         $wildcardRoutes = [];
-
         foreach ($this->routes as $route => $controller) {
             if (substr($route, -2) == '/*') {
                 $wildcardRoutes[] = $route;
@@ -165,6 +147,14 @@ class Http extends AbstractMatch
                     if ($matchedParams !== false) {
                         $this->route = $route;
                         $this->processMatchedParams($matchedParams, $controller);
+                    } else if (isset($controller['dispatchParams'][0]) && ($controller['dispatchParams'][0]['name'] == 'controller') &&
+                        isset($controller['dispatchParams'][1]) && ($controller['dispatchParams'][1]['name'] == 'action')) {
+                        $this->route = $route;
+                        $this->resetSegments();
+                        $this->processMatchedParams([
+                            'controller' => $this->segments[0],
+                            'action'     => (isset($this->segments[1]) ? $this->segments[1] : 'index')
+                        ], $controller);
                     }
                 } else {
                     $suffix = substr($this->segmentString, strlen($route));
@@ -174,9 +164,9 @@ class Http extends AbstractMatch
                         if (isset($controller['action'])) {
                             $this->action = $controller['action'];
                         }
-                        if (isset($controller['routeParams'])) {
-                            $this->routeParams = (!is_array($controller['routeParams'])) ?
-                                [$controller['routeParams']] : $controller['routeParams'];
+                        if (isset($controller['controllerParams'])) {
+                            $this->controllerParams = (!is_array($controller['controllerParams'])) ?
+                                [$controller['controllerParams']] : $controller['controllerParams'];
                         }
                     }
                 }
@@ -185,7 +175,6 @@ class Http extends AbstractMatch
                 $this->defaultController = $controller['controller'];
             }
         }
-
         // Check any possible wildcard routes
         if ((null === $this->controller) && (count($wildcardRoutes) > 0)) {
             foreach ($wildcardRoutes as $wildcardRoute) {
@@ -201,7 +190,6 @@ class Http extends AbstractMatch
                 }
             }
         }
-
         // If no route/controller defined yet, check for top level default route
         if ((null === $this->controller) && isset($this->routes[''])) {
             $route      = '';
@@ -212,6 +200,13 @@ class Http extends AbstractMatch
                 if ($matchedParams !== false) {
                     $this->route = $route;
                     $this->processMatchedParams($matchedParams, $controller);
+                } else if (isset($controller['dispatchParams'][0]) && ($controller['dispatchParams'][0]['name'] == 'controller') &&
+                    isset($controller['dispatchParams'][1]) && ($controller['dispatchParams'][1]['name'] == 'action') && isset($this->segments[0])) {
+                    $this->route = $route;
+                    $this->processMatchedParams([
+                        'controller' => $this->segments[0],
+                        'action'     => (isset($this->segments[1]) ? $this->segments[1] : 'index')
+                    ], $controller);
                 }
             } else {
                 $suffix = ($route != '') ? substr($this->segmentString, strlen($route)) : '';
@@ -223,14 +218,13 @@ class Http extends AbstractMatch
                     if (isset($controller['action'])) {
                         $this->action = $controller['action'];
                     }
-                    if (isset($controller['routeParams'])) {
-                        $this->routeParams = (!is_array($controller['routeParams'])) ?
-                            [$controller['routeParams']] : $controller['routeParams'];
+                    if (isset($controller['controllerParams'])) {
+                        $this->controllerParams = (!is_array($controller['controllerParams'])) ?
+                            [$controller['controllerParams']] : $controller['controllerParams'];
                     }
                 }
             }
         }
-
         // If no route or controller found yet, check for a wildcard/default route
         if ((null === $this->controller) && (count($this->wildcards) > 0)) {
             foreach ($this->wildcards as $wildcardRoute => $wildcardController) {
@@ -246,7 +240,6 @@ class Http extends AbstractMatch
                 $this->controller = $this->wildcards['*']['controller'];
                 $controller       = $this->wildcards['*'];
             }
-
             if (isset($controller['action'])) {
                 $this->action = $controller['action'];
             }
@@ -257,15 +250,13 @@ class Http extends AbstractMatch
                     $this->dispatchParams  = $matchedParams;
                 }
             }
-            if (isset($this->routes[$this->route]['routeParams'])) {
-                $this->routeParams = (!is_array($this->routes[$this->route]['routeParams'])) ?
-                    [$this->routes[$this->route]['routeParams']] : $this->routes[$this->route]['routeParams'];
+            if (isset($this->routes[$this->route]['controllerParams'])) {
+                $this->controllerParams = (!is_array($this->routes[$this->route]['controllerParams'])) ?
+                    [$this->routes[$this->route]['controllerParams']] : $this->routes[$this->route]['controllerParams'];
             }
         }
-
         return ((null !== $this->controller) || (null !== $this->defaultController));
     }
-
     /**
      * Method to process if a route was not found
      *
@@ -284,7 +275,6 @@ class Http extends AbstractMatch
         echo '</body>' . PHP_EOL;
         echo '</html>'. PHP_EOL;
     }
-
     /**
      * Prepare the routes
      *
@@ -296,7 +286,6 @@ class Http extends AbstractMatch
         foreach ($routes as $route => $controller) {
             $hasRequiredTrailingSlash = false;
             $hasOptionalTrailingSlash = false;
-
             // Handle required trailing slash
             if (substr($route, -1) == '/') {
                 $route = substr($route, 0, -1);
@@ -316,7 +305,6 @@ class Http extends AbstractMatch
             } else {
                 $controller['wildcard'] = false;
             }
-
             // Handle params
             if (strpos($route, '/:') !== false) {
                 $controller['dispatchParams'] = [];
@@ -325,9 +313,7 @@ class Http extends AbstractMatch
                 if (strpos($route, '[') !== false) {
                     $route = substr($route, 0, strpos($route, '['));
                 }
-
                 $params = (strpos($params, '/:') !== false) ? explode('/:', $params) : [$params];
-
                 foreach ($params as $param) {
                     if (strpos($param, '*') !== false) {
                         $collection = true;
@@ -335,7 +321,6 @@ class Http extends AbstractMatch
                     } else {
                         $collection = false;
                     }
-
                     if (strpos($param, ']') !== false) {
                         $paramName     = substr($param, 0, strpos($param, ']'));
                         $paramRequired = false;
@@ -346,7 +331,6 @@ class Http extends AbstractMatch
                         $paramName     = $param;
                         $paramRequired = true;
                     }
-
                     $controller['dispatchParams'][] = [
                         'name'       => $paramName,
                         'required'   => $paramRequired,
@@ -354,7 +338,6 @@ class Http extends AbstractMatch
                     ];
                 }
             }
-
             if ($hasRequiredTrailingSlash) {
                 $this->routes[$route . '/'] = $controller;
             } else if ($hasOptionalTrailingSlash) {
@@ -363,9 +346,8 @@ class Http extends AbstractMatch
             } else {
                 $this->routes[$route] = $controller;
             }
-         }
+        }
     }
-
     /**
      * Get parameters from the route string
      *
@@ -387,37 +369,35 @@ class Http extends AbstractMatch
         }
         return $params;
     }
-
     /**
      * Process parameters from the route string
      *
      * @param  array $params
-     * @param  array $routeParams
+     * @param  array $dispatchParams
      * @return mixed
      */
-    protected function processDispatchParamsFromRoute($params, $routeParams)
+    protected function processDispatchParamsFromRoute($params, $dispatchParams)
     {
         $result        = true;
         $hasCollection = false;
         $matchedParams = [];
-
         // If there's a direct match
-        if (count($params) == count($routeParams)) {
+        if (count($params) == count($dispatchParams)) {
             foreach ($params as $i => $param) {
-                $matchedParams[$routeParams[$i]['name']] = ($routeParams[$i]['collection']) ? [$param] : $param;
+                $matchedParams[$dispatchParams[$i]['name']] = ($dispatchParams[$i]['collection']) ? [$param] : $param;
             }
-        // Else, loop through and verify the parameters
-        } else if (count($params) < count($routeParams)) {
-            foreach ($routeParams as $i => $param) {
+            // Else, loop through and verify the parameters
+        } else if (count($params) < count($dispatchParams)) {
+            foreach ($dispatchParams as $i => $param) {
                 if (($param['required']) && !isset($params[$i])) {
                     $result = false;
                 } else if (isset($params[$i])) {
                     $matchedParams[$param['name']] = ($param['collection']) ? [$params[$i]] : $params[$i];
                 }
             }
-        // Else, check for a collection of parameters
-        } else if (count($params) > count($routeParams)) {
-            foreach ($routeParams as $param) {
+            // Else, check for a collection of parameters
+        } else if (count($params) > count($dispatchParams)) {
+            foreach ($dispatchParams as $param) {
                 if ($param['collection']) {
                     $hasCollection = true;
                 }
@@ -425,12 +405,12 @@ class Http extends AbstractMatch
             if ($hasCollection) {
                 $collectionName = null;
                 foreach ($params as $i => $param) {
-                    if (isset($routeParams[$i])) {
-                        if ($routeParams[$i]['collection']) {
-                            $collectionName = $routeParams[$i]['name'];
+                    if (isset($dispatchParams[$i])) {
+                        if ($dispatchParams[$i]['collection']) {
+                            $collectionName = $dispatchParams[$i]['name'];
                             $matchedParams[$collectionName] = [$param];
                         } else {
-                            $matchedParams[$routeParams[$i]['name']] = $param;
+                            $matchedParams[$dispatchParams[$i]['name']] = $param;
                         }
                     } else if ((null !== $collectionName) && isset($matchedParams[$collectionName])) {
                         $matchedParams[$collectionName][] = $param;
@@ -440,10 +420,8 @@ class Http extends AbstractMatch
                 $result = false;
             }
         }
-
         return ($result) ? $matchedParams : false;
     }
-
     /**
      * Process matched parameters
      *
@@ -454,7 +432,6 @@ class Http extends AbstractMatch
     protected function processMatchedParams(array $matchedParams, array $controller)
     {
         $dynamicController = null;
-
         if (isset($matchedParams['controller'])) {
             $dynamicController = ucwords(str_replace(['-', '_'], [' ', ' '], $matchedParams['controller']));
             $dynamicController = str_replace(' ', '', $dynamicController) . 'Controller';
@@ -470,7 +447,6 @@ class Http extends AbstractMatch
         } else if (isset($controller['controller'])) {
             $this->controller = $controller['controller'];
         }
-
         if (isset($matchedParams['action'])) {
             $action = lcfirst(ucwords(str_replace(['-', '_'], [' ', ' '], $matchedParams['action'])));
             $action = str_replace(' ', '', $action);
@@ -483,12 +459,35 @@ class Http extends AbstractMatch
         } else if (isset($controller['action'])) {
             $this->action = $controller['action'];
         }
-
         $this->dispatchParams = $matchedParams;
-        if (isset($controller['routeParams'])) {
-            $this->routeParams = (!is_array($controller['routeParams'])) ?
-                [$controller['routeParams']] : $controller['routeParams'];
+        if (isset($controller['controllerParams'])) {
+            $this->controllerParams = (!is_array($controller['controllerParams'])) ?
+                [$controller['controllerParams']] : $controller['controllerParams'];
         }
     }
-
+    /**
+     * Reset URL segments based on route
+     *
+     * @return void
+     */
+    protected function resetSegments()
+    {
+        if (substr($this->segmentString, 0, strlen($this->route)) == $this->route) {
+            $this->segmentString = substr($this->segmentString, strlen($this->route));
+        }
+        // Trim trailing slash, if present
+        if (substr($this->segmentString, -1) == '/') {
+            $this->segmentString = substr($this->segmentString, 0, -1);
+            $trailingSlash = '/';
+        } else {
+            $trailingSlash = null;
+        }
+        if ($this->segmentString == '') {
+            $this->segments      = ['index'];
+            $this->segmentString = '/';
+        } else {
+            $this->segments      = explode('/', substr($this->segmentString, 1));
+            $this->segmentString = '/' . implode('/', $this->segments) . $trailingSlash;
+        }
+    }
 }

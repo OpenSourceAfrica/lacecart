@@ -7,12 +7,10 @@
  * @copyright  Copyright (c) 2009-2015 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
-
 /**
  * @namespace
  */
 namespace Pop\Controller;
-
 /**
  * Pop abstract controller class
  *
@@ -21,17 +19,15 @@ namespace Pop\Controller;
  * @author     Nick Sagona, III <dev@nolainteractive.com>
  * @copyright  Copyright (c) 2009-2015 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    2.0.1
+ * @version    2.0.2
  */
 abstract class AbstractController implements ControllerInterface
 {
-
     /**
      * Default action
      * @var string
      */
     protected $defaultAction = 'error';
-
     /**
      * Set the default action
      *
@@ -43,7 +39,6 @@ abstract class AbstractController implements ControllerInterface
         $this->defaultAction = $default;
         return $this;
     }
-
     /**
      * Get the default action
      *
@@ -53,7 +48,6 @@ abstract class AbstractController implements ControllerInterface
     {
         return $this->defaultAction;
     }
-
     /**
      * Dispatch the controller based on the action
      *
@@ -64,18 +58,17 @@ abstract class AbstractController implements ControllerInterface
      */
     public function dispatch($action = null, array $params = null)
     {
-        if (null === $action) {
-            $action = $this->defaultAction;
-        }
-        if (method_exists($this, $action)) {
+        if ((null !== $action) && method_exists($this, $action)) {
             if (null !== $params) {
                 call_user_func_array([$this, $action], $params);
             } else {
                 $this->$action();
             }
+        } else if ((null !== $this->defaultAction) && method_exists($this, $this->defaultAction)) {
+            $action = $this->defaultAction;
+            $this->$action();
         } else {
             throw new Exception('That action is not defined in the controller.');
         }
     }
-
 }
